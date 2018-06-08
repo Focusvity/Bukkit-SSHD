@@ -1,30 +1,36 @@
-package com.ryanmichela.sshd;
+package com.ryanmichela.bukkitssh;
 
-import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory;
+import com.ryanmichela.bukkitssh.authenticator.ConfigPasswordAuthenticator;
+import com.ryanmichela.bukkitssh.authenticator.PublicKeyAuthenticator;
+import com.ryanmichela.bukkitssh.console.ConsoleCommandFactory;
+import com.ryanmichela.bukkitssh.console.ConsoleShellFactory;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
-import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.util.Collections;
 import java.util.logging.Level;
 
 /**
  * Copyright 2013 Ryan Michela
  */
-public class SshdPlugin extends JavaPlugin {
+public class BukkitSSH extends JavaPlugin
+{
 
+    public static BukkitSSH instance;
     private SshServer sshd;
-    public static SshdPlugin instance;
+    private File authorizedKeys;
 
     @Override
-    public void onLoad() {
+    public void onLoad()
+    {
+        instance = this;
         saveDefaultConfig();
-        File authorizedKeys = new File(getDataFolder(), "authorized_keys");
-        if (!authorizedKeys.exists()) {
+
+        authorizedKeys = new File(getDataFolder(), "authorized_keys");
+        if (!authorizedKeys.exists())
+        {
             authorizedKeys.mkdirs();
         }
 
@@ -35,44 +41,42 @@ public class SshdPlugin extends JavaPlugin {
     }
 
     @Override
-    public void onEnable() {
+    public void onEnable()
+    {
         instance = this;
 
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(getConfig().getInt("port", 22));
-        String host = getConfig().getString("listenAddress", "all");
-        sshd.setHost(host.equals("all") ? null : host);
+        String host = getConfig().getString("listenAddress", "0.0.0.0");
+        sshd.setHost(host.equals("0.0.0.0") ? null : host);
 
         File hostKey = new File(getDataFolder(), "hostkey");
-        File authorizedKeys = new File(getDataFolder(), "authorized_keys");
 
         sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(hostKey));
         sshd.setShellFactory(new ConsoleShellFactory());
-        sshd.setPasswordAuthenticator(new ConfigPasswordAuthenticator());
+        //sshd.setPasswordAuthenticator(new ConfigPasswordAuthenticator()); May be useful in the future
         sshd.setPublickeyAuthenticator(new PublicKeyAuthenticator(authorizedKeys));
-
-        if (getConfig().getBoolean("enableSFTP")) {
-            sshd.setSubsystemFactories(Collections.singletonList(new SftpSubsystemFactory()));
-            sshd.setFileSystemFactory(new VirtualFileSystemFactory(
-                    FileSystems.getDefault().getPath(
-                            getDataFolder().getAbsolutePath()
-                    ).getParent().getParent()
-            ));
-        }
-
         sshd.setCommandFactory(new ConsoleCommandFactory());
-        try {
+
+        try
+        {
             sshd.start();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             getLogger().log(Level.SEVERE, "Failed to start SSH server! ", e);
         }
     }
 
     @Override
-    public void onDisable() {
-        try {
+    public void onDisable()
+    {
+        try
+        {
             sshd.stop();
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             // do nothing
         }
     }

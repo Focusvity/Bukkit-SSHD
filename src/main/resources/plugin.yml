@@ -1,4 +1,5 @@
-name: SSHD
+name: BukkitSSH
 version: ${project.version}
-author: Ryan Michela, Haarolean, toxuin
-main: com.ryanmichela.sshd.SshdPlugin
+authors: [Ryan Michela, Haarolean, toxuin, _Fleek_]
+main: com.ryanmichela.bukkitssh.BukkitSSH
+description: A modified SSH plugin for TotalFreedom server
