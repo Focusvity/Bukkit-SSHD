@@ -1,6 +1,5 @@
 package com.ryanmichela.bukkitssh;
 
-import com.ryanmichela.bukkitssh.authenticator.ConfigPasswordAuthenticator;
 import com.ryanmichela.bukkitssh.authenticator.PublicKeyAuthenticator;
 import com.ryanmichela.bukkitssh.console.ConsoleCommandFactory;
 import com.ryanmichela.bukkitssh.console.ConsoleShellFactory;

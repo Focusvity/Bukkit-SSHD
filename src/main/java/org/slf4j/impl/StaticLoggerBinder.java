@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.spi.LoggerFactoryBinder;
 
 /**
- * The binding of {@link LoggerFactory} class with an actual instance of 
- * {@link ILoggerFactory} is performed using information returned by this class. 
+ * The binding of {@link LoggerFactory} class with an actual instance of
+ * {@link ILoggerFactory} is performed using information returned by this class.
  *
  * @author Ceki G&uuml;lc&uuml;
  */
@@ -38,7 +38,6 @@ public class StaticLoggerBinder implements LoggerFactoryBinder
 
     /**
      * The unique instance of this class.
-     *
      */
     private static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
     private static final String loggerFactoryClassStr = PluginSlf4jFactory.class.getName();
@@ -48,7 +47,8 @@ public class StaticLoggerBinder implements LoggerFactoryBinder
      */
     // to avoid constant folding by the compiler, this field must *not* be final
     public static String REQUESTED_API_VERSION = "1.6.99";  // !final
-    /** The ILoggerFactory instance returned by the {@link #getLoggerFactory} method
+    /**
+     * The ILoggerFactory instance returned by the {@link #getLoggerFactory} method
      * should always be the same object
      */
     private final ILoggerFactory loggerFactory;

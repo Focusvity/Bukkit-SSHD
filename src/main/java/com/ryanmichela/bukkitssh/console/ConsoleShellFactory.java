@@ -137,7 +137,7 @@ public class ConsoleShellFactory implements Factory<Command>
 
                     Bukkit.getScheduler().runTask(BukkitSSH.instance, () ->
                     {
-                        BukkitSSH.instance.getLogger().info("[SSH: " + environment.getEnv().get(Environment.ENV_USER) + "] Command executed: " + command);
+                        BukkitSSH.instance.getLogger().info("[" + environment.getEnv().get(Environment.ENV_USER) + "@SSH] Command executed: " + command);
 
                         for (SSHSession session : SSHSession.sessions)
                         {
@@ -156,16 +156,23 @@ public class ConsoleShellFactory implements Factory<Command>
             finally
             {
                 callback.onExit(0);
+                for (SSHSession session : SSHSession.sessions)
+                {
+                    if (session.getUsername().equals(environment.getEnv().get(Environment.ENV_USER)))
+                    {
+                        SSHSession.sessions.remove(session);
+                    }
+                }
             }
         }
 
         private void printPreamble(ConsoleReader consoleReader) throws IOException
         {
             consoleReader.println("Connected to: " + Bukkit.getServer().getName() + "\r");
-            consoleReader.println("- " + Bukkit.getServer().getMotd() + "\r");
+            consoleReader.println(" - " + Bukkit.getServer().getMotd() + "\r");
             consoleReader.println("\r");
             consoleReader.println("Type 'ssh.exit' or 'ssh.quit' to exit the shell." + "\r");
-            consoleReader.println("===============================================" + "\r");
+            consoleReader.println("================================================" + "\r");
         }
     }
 }

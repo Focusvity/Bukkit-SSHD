@@ -21,16 +21,16 @@ public class SSHCommandEvent extends ServerEvent implements Cancellable
         this.command = command;
     }
 
+    public static HandlerList getHandlerList() // Required for Aero dependency
+    {
+        return handlers;
+    }
+
     @Override
     public HandlerList getHandlers()
     {
         return handlers;
     }
-	
-	public static HandlerList getHandlerList()
-	{
-		return handlers;
-	}
 
     @Override
     public boolean isCancelled()

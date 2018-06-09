@@ -64,7 +64,7 @@ public class ConsoleCommandFactory implements CommandFactory
             try
             {
                 BukkitSSH.instance.getLogger()
-                        .info("[SSH: " + environment.getEnv().get(Environment.ENV_USER) + "] Command executed: " + command);
+                        .info("[" + environment.getEnv().get(Environment.ENV_USER) + "@SSH] Command executed: " + command);
 
                 for (SSHSession session : SSHSession.sessions)
                 {
@@ -81,6 +81,13 @@ public class ConsoleCommandFactory implements CommandFactory
             finally
             {
                 callback.onExit(0);
+                for (SSHSession session : SSHSession.sessions)
+                {
+                    if (session.getUsername().equals(environment.getEnv().get(Environment.ENV_USER)))
+                    {
+                        SSHSession.sessions.remove(session);
+                    }
+                }
             }
         }
 
