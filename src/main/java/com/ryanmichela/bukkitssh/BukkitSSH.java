@@ -1,5 +1,6 @@
 package com.ryanmichela.bukkitssh;
 
+import com.ryanmichela.bukkitssh.authenticator.ConfigPasswordAuthenticator;
 import com.ryanmichela.bukkitssh.authenticator.PublicKeyAuthenticator;
 import com.ryanmichela.bukkitssh.console.ConsoleCommandFactory;
 import com.ryanmichela.bukkitssh.console.ConsoleShellFactory;
@@ -53,7 +54,7 @@ public class BukkitSSH extends JavaPlugin
 
         sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(hostKey));
         sshd.setShellFactory(new ConsoleShellFactory());
-        //sshd.setPasswordAuthenticator(new ConfigPasswordAuthenticator()); May be useful in the future
+        sshd.setPasswordAuthenticator(new ConfigPasswordAuthenticator());
         sshd.setPublickeyAuthenticator(new PublicKeyAuthenticator(authorizedKeys));
         sshd.setCommandFactory(new ConsoleCommandFactory());
 

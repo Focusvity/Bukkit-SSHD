@@ -6,7 +6,7 @@ import com.ryanmichela.bukkitssh.util.FlushyOutputStream;
 import com.ryanmichela.bukkitssh.util.FlushyStreamHandler;
 import com.ryanmichela.bukkitssh.util.StreamHandlerAppender;
 import jline.console.ConsoleReader;
-import me.focusvity.ssh.session.SSHSession;
+import me.totalfreedom.bukkitssh.session.SSHSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.sshd.common.Factory;

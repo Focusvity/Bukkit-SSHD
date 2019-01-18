@@ -1,7 +1,7 @@
 package com.ryanmichela.bukkitssh.console;
 
 import com.ryanmichela.bukkitssh.BukkitSSH;
-import me.focusvity.ssh.session.SSHSession;
+import me.totalfreedom.bukkitssh.session.SSHSession;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.CommandFactory;
 import org.apache.sshd.server.Environment;
