@@ -2,8 +2,11 @@ package com.ryanmichela.bukkitssh;
 
 import com.ryanmichela.bukkitssh.authenticator.ConfigPasswordAuthenticator;
 import com.ryanmichela.bukkitssh.authenticator.PublicKeyAuthenticator;
+//import com.ryanmichela.bukkitssh.console.ConsoleCommandFactory;
 import com.ryanmichela.bukkitssh.console.ConsoleCommandFactory;
 import com.ryanmichela.bukkitssh.console.ConsoleShellFactory;
+import org.apache.mina.filter.logging.LogLevel;
+import org.apache.sshd.common.session.helpers.AbstractSession;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,7 +40,7 @@ public class BukkitSSH extends JavaPlugin
         // Don't go any lower than INFO or SSHD will cause a stack overflow exception.
         // SSHD will log that it wrote bites to the output stream, which writes
         // bytes to the output stream - ad nauseaum.
-        getLogger().setLevel(Level.INFO);
+        getLogger().setLevel(Level.ALL);
     }
 
     @Override

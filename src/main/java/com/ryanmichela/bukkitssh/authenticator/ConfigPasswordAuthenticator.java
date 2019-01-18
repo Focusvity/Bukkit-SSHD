@@ -18,7 +18,6 @@ import java.util.Map;
 public class ConfigPasswordAuthenticator implements PasswordAuthenticator
 {
 
-    private Map<String, Integer> failCounts = new HashMap<>();
 
     @Override
     public boolean authenticate(String username, String password, ServerSession serverSession)
@@ -36,44 +35,16 @@ public class ConfigPasswordAuthenticator implements PasswordAuthenticator
         {
             return passAuth(username, password, serverSession);
         }
-        if(event.getName() != null)
-        {
-            serverSession.setUsername(username);
-        }
-        return true;
+        return event.canBypassPassword();
     }
 
     private Boolean passAuth(String username, String password, ServerSession serverSession)
     {
         if (BukkitSSH.instance.getConfig().getString("credentials." + username).equals(password))
         {
-            failCounts.put(username, 0);
             return true;
         }
         BukkitSSH.instance.getLogger().info("Failed login for " + username + " using password authentication.");
-
-        try
-        {
-            Thread.sleep(3000);
-            if (failCounts.containsKey(username))
-            {
-                failCounts.put(username, failCounts.get(username) + 1);
-            }
-            else
-            {
-                failCounts.put(username, 1);
-            }
-            if (failCounts.get(username) >= 3)
-            {
-                failCounts.put(username, 0);
-                serverSession.close(true);
-                return false;
-            }
-        }
-        catch (InterruptedException e)
-        {
-            return false;
-        }
         return false;
     }
 

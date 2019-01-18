@@ -14,10 +14,19 @@ import org.apache.sshd.server.Command;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.conversations.Conversation;
+import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.StreamHandler;
 
@@ -104,7 +113,6 @@ public class ConsoleShellFactory implements Factory<Command>
                 thread.start();
                 SSHSession session = new SSHSession();
                 session.setUsername(env.getEnv().get(Environment.ENV_USER));
-                SSHSession.sessions.add(session);
             }
             catch (Exception e)
             {
@@ -134,19 +142,162 @@ public class ConsoleShellFactory implements Factory<Command>
                     {
                         break;
                     }
-
                     Bukkit.getScheduler().runTask(BukkitSSH.instance, () ->
                     {
-                        BukkitSSH.instance.getLogger().info("[" + environment.getEnv().get(Environment.ENV_USER) + "@SSH] Command executed: " + command);
+                      Bukkit.dispatchCommand(new ConsoleCommandSender()
+                      {
+                          @Override
+                          public void sendMessage(String s)
+                          {
+                              try
+                              {
+                                  ConsoleShell.consoleReader.println(new ConsoleLogFormatter().colorize(s));
+                              }
+                              catch (IOException e)
+                              {
+                                  //ignored
+                              }
+                          }
 
-                        for (SSHSession session : SSHSession.sessions)
-                        {
-                            if (session.getUsername().equals(environment.getEnv().get(Environment.ENV_USER)))
-                            {
-                                session.executeCommand(command);
-                            }
-                        }
+                          @Override
+                          public void sendMessage(String[] strings)
+                          {
+                              for(String st : strings)
+                              {
+                                  sendMessage(st);
+                              }
+                          }
+
+                          @Override
+                          public Server getServer()
+                          {
+                              return  Bukkit.getServer();
+                          }
+
+                          @Override
+                          public String getName()
+                          {
+                              return environment.getEnv().get(Environment.ENV_USER);
+                          }
+
+                          @Override
+                          public boolean isConversing()
+                          {
+                              return false;
+                          }
+
+                          @Override
+                          public void acceptConversationInput(String s)
+                          {
+
+                          }
+
+                          @Override
+                          public boolean beginConversation(Conversation conversation)
+                          {
+                              return false;
+                          }
+
+                          @Override
+                          public void abandonConversation(Conversation conversation)
+                          {
+
+                          }
+
+                          @Override
+                          public void abandonConversation(Conversation conversation, ConversationAbandonedEvent conversationAbandonedEvent)
+                          {
+
+                          }
+
+                          @Override
+                          public void sendRawMessage(String s)
+                          {
+                                sendMessage(s);
+                          }
+
+                          @Override
+                          public boolean isPermissionSet(String s)
+                          {
+                              return true;
+                          }
+
+                          @Override
+                          public boolean isPermissionSet(Permission permission)
+                          {
+                              return true;
+                          }
+
+                          @Override
+                          public boolean hasPermission(String s)
+                          {
+                              return true;
+                          }
+
+                          @Override
+                          public boolean hasPermission(Permission permission)
+                          {
+                              return true;
+                          }
+
+                          @Override
+                          public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b)
+                          {
+                              return null;
+                          }
+
+                          @Override
+                          public PermissionAttachment addAttachment(Plugin plugin)
+                          {
+                              return null;
+                          }
+
+                          @Override
+                          public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b, int i)
+                          {
+                              return null;
+                          }
+
+                          @Override
+                          public PermissionAttachment addAttachment(Plugin plugin, int i)
+                          {
+                              return null;
+                          }
+
+                          @Override
+                          public void removeAttachment(PermissionAttachment permissionAttachment)
+                          {
+
+                          }
+
+                          @Override
+                          public void recalculatePermissions()
+                          {
+
+                          }
+
+                          @Override
+                          public Set<PermissionAttachmentInfo> getEffectivePermissions()
+                          {
+                              return null;
+                          }
+
+                          @Override
+                          public boolean isOp()
+                          {
+                              return false;
+                          }
+
+                          @Override
+                          public void setOp(boolean b)
+                          {
+
+                          }
+                      }, command);
+
                     });
+
+                     BukkitSSH.instance.getLogger().info("[" + environment.getEnv().get(Environment.ENV_USER) + "@SSH] Command executed: " + command);
                 }
             }
             catch (IOException e)
@@ -156,13 +307,8 @@ public class ConsoleShellFactory implements Factory<Command>
             finally
             {
                 callback.onExit(0);
-                for (SSHSession session : SSHSession.sessions)
-                {
-                    if (session.getUsername().equals(environment.getEnv().get(Environment.ENV_USER)))
-                    {
-                        SSHSession.sessions.remove(session);
-                    }
-                }
+                this.destroy();
+                this.thread.stop();
             }
         }
 

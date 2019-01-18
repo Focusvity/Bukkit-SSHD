@@ -1,6 +1,7 @@
 package me.totalfreedom.bukkitssh.session;
 
 import com.ryanmichela.bukkitssh.BukkitSSH;
+import com.ryanmichela.bukkitssh.console.ConsoleLogFormatter;
 import com.ryanmichela.bukkitssh.console.ConsoleShellFactory;
 import me.totalfreedom.bukkitssh.SSHCommandEvent;
 import org.bukkit.Bukkit;
@@ -50,7 +51,7 @@ public class SSHSession
 
         try
         {
-            ConsoleShellFactory.ConsoleShell.consoleReader.println(ChatColor.stripColor(message));
+            ConsoleShellFactory.ConsoleShell.consoleReader.println(new ConsoleLogFormatter().colorize(message));
         }
         catch (IOException ex)
         {
@@ -60,6 +61,7 @@ public class SSHSession
 
     public void executeCommand(final String command)
     {
+
         new BukkitRunnable()
         {
             @Override
@@ -76,6 +78,14 @@ public class SSHSession
                 }
 
                 server.dispatchCommand(event.getSender(), command);
+                try
+                {
+                    ConsoleShellFactory.ConsoleShell.consoleReader.println("");
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
             }
         }.runTask(BukkitSSH.instance);
     }
