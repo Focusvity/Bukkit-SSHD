@@ -1,6 +1,10 @@
 package me.totalfreedom.bukkitssh.session;
 
+import com.ryanmichela.bukkitssh.BukkitSSH;
+import com.ryanmichela.bukkitssh.console.ConsoleLogFormatter;
+import com.ryanmichela.bukkitssh.console.ConsoleShellFactory;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversation;
@@ -10,17 +14,17 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 
 public class SessionCommandSender implements ConsoleCommandSender
 {
+    private final String name;
 
-    private final SSHSession session;
-
-    public SessionCommandSender(SSHSession session)
+    public SessionCommandSender(String name)
     {
-        this.session = session;
+        this.name = name;
     }
 
     @Override
@@ -44,7 +48,7 @@ public class SessionCommandSender implements ConsoleCommandSender
     @Override
     public String getName()
     {
-        return this.session.getUsername();
+        return name;
     }
 
     @Override
@@ -77,7 +81,14 @@ public class SessionCommandSender implements ConsoleCommandSender
     @Override
     public void sendRawMessage(String s)
     {
-        this.session.writeRawLine(s);
+        try
+        {
+            if(ConsoleShellFactory.ConsoleShell.consoleReader == null) return;
+            ConsoleShellFactory.ConsoleShell.consoleReader.println(ChatColor.stripColor(s));
+        }
+        catch(Exception ignored)
+        {
+        }
     }
 
     @Override

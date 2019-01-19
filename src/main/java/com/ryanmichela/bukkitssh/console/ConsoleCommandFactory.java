@@ -1,12 +1,13 @@
 package com.ryanmichela.bukkitssh.console;
 
 import com.ryanmichela.bukkitssh.BukkitSSH;
-import me.totalfreedom.bukkitssh.session.SSHSession;
+import me.totalfreedom.bukkitssh.SSHCommandEvent;
+import me.totalfreedom.bukkitssh.session.SessionCommandSender;
 import org.apache.commons.lang.StringUtils;
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.CommandFactory;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
+import org.apache.sshd.server.command.Command;
+import org.apache.sshd.server.command.CommandFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.ConsoleCommandSender;
@@ -43,7 +44,6 @@ public class ConsoleCommandFactory implements CommandFactory
         private OutputStream out;
         private OutputStream err;
         private ExitCallback callback;
-        private Environment env;
 
         public ConsoleCommand(String command)
         {
@@ -75,164 +75,22 @@ public class ConsoleCommandFactory implements CommandFactory
         {
             try
             {
-                if(command.isEmpty() || command.equals("") || StringUtils.isEmpty(command) || command.contains("unset LANG LANGUAGE LC_CTYPE LC_COLLATE LC_MONETARY"))
-                {
-                    return;
-                }
-                this.env = environment;
 
+                if(!StringUtils.isEmpty(command))
                 BukkitSSH.instance.getLogger()
-                        .info("[" + environment.getEnv().get(Environment.ENV_USER) + "@SSH] Command executed: " + command);
-                Bukkit.dispatchCommand(new ConsoleCommandSender()
+                        .info("[" + BukkitSSH.instance.usernameMap.get(environment.getEnv().get(Environment.ENV_IP)) + "@SSH] Command executed: " + command);
+                SessionCommandSender sender = new SessionCommandSender(BukkitSSH.instance.usernameMap.get(environment.getEnv().get(Environment.ENV_IP)));
+                SSHCommandEvent event = new SSHCommandEvent(sender, command);
+                if(!event.isCancelled())
+                Bukkit.dispatchCommand(sender, command);
+                try
                 {
-                    @Override
-                    public void sendMessage(String s)
-                    {
-                        try
-                        {
-                            ConsoleShellFactory.ConsoleShell.consoleReader.println(new ConsoleLogFormatter().colorize(s));
-                        }
-                        catch (IOException e)
-                        {
-                            //ignored
-                        }
-                    }
-
-                    @Override
-                    public void sendMessage(String[] strings)
-                    {
-                        for(String st : strings)
-                        {
-                            sendMessage(st);
-                        }
-                    }
-
-                    @Override
-                    public Server getServer()
-                    {
-                        return  Bukkit.getServer();
-                    }
-
-                    @Override
-                    public String getName()
-                    {
-                        return environment.getEnv().get(Environment.ENV_USER);
-                    }
-
-                    @Override
-                    public boolean isConversing()
-                    {
-                        return false;
-                    }
-
-                    @Override
-                    public void acceptConversationInput(String s)
-                    {
-
-                    }
-
-                    @Override
-                    public boolean beginConversation(Conversation conversation)
-                    {
-                        return false;
-                    }
-
-                    @Override
-                    public void abandonConversation(Conversation conversation)
-                    {
-
-                    }
-
-                    @Override
-                    public void abandonConversation(Conversation conversation, ConversationAbandonedEvent conversationAbandonedEvent)
-                    {
-
-                    }
-
-                    @Override
-                    public void sendRawMessage(String s)
-                    {
-                        sendMessage(s);
-                    }
-
-                    @Override
-                    public boolean isPermissionSet(String s)
-                    {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean isPermissionSet(Permission permission)
-                    {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean hasPermission(String s)
-                    {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean hasPermission(Permission permission)
-                    {
-                        return true;
-                    }
-
-                    @Override
-                    public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b)
-                    {
-                        return null;
-                    }
-
-                    @Override
-                    public PermissionAttachment addAttachment(Plugin plugin)
-                    {
-                        return null;
-                    }
-
-                    @Override
-                    public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b, int i)
-                    {
-                        return null;
-                    }
-
-                    @Override
-                    public PermissionAttachment addAttachment(Plugin plugin, int i)
-                    {
-                        return null;
-                    }
-
-                    @Override
-                    public void removeAttachment(PermissionAttachment permissionAttachment)
-                    {
-
-                    }
-
-                    @Override
-                    public void recalculatePermissions()
-                    {
-
-                    }
-
-                    @Override
-                    public Set<PermissionAttachmentInfo> getEffectivePermissions()
-                    {
-                        return null;
-                    }
-
-                    @Override
-                    public boolean isOp()
-                    {
-                        return true;
-                    }
-
-                    @Override
-                    public void setOp(boolean b)
-                    {
-
-                    }
-                }, command);
+                    ConsoleShellFactory.ConsoleShell.consoleReader.println(" ");
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
             }
             catch (Exception e)
             {
@@ -241,7 +99,6 @@ public class ConsoleCommandFactory implements CommandFactory
             finally
             {
                 callback.onExit(0);
-                this.destroy();
             }
         }
 

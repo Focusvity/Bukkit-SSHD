@@ -5,14 +5,21 @@ import com.ryanmichela.bukkitssh.authenticator.PublicKeyAuthenticator;
 //import com.ryanmichela.bukkitssh.console.ConsoleCommandFactory;
 import com.ryanmichela.bukkitssh.console.ConsoleCommandFactory;
 import com.ryanmichela.bukkitssh.console.ConsoleShellFactory;
-import org.apache.mina.filter.logging.LogLevel;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.sshd.common.NamedFactory;
+import org.apache.sshd.common.channel.Channel;
+import org.apache.sshd.common.channel.ChannelListener;
 import org.apache.sshd.common.session.helpers.AbstractSession;
 import org.apache.sshd.server.SshServer;
+import org.apache.sshd.server.command.Command;
+import org.apache.sshd.server.command.CommandFactory;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.logging.Level;
 
 /**
@@ -22,8 +29,11 @@ public class BukkitSSH extends JavaPlugin
 {
 
     public static BukkitSSH instance;
+    @Getter @Setter
     private SshServer sshd;
     private File authorizedKeys;
+    public  HashMap<String, String> usernameMap = new HashMap<>(); //ip, username
+
 
     @Override
     public void onLoad()
@@ -40,7 +50,7 @@ public class BukkitSSH extends JavaPlugin
         // Don't go any lower than INFO or SSHD will cause a stack overflow exception.
         // SSHD will log that it wrote bites to the output stream, which writes
         // bytes to the output stream - ad nauseaum.
-        getLogger().setLevel(Level.ALL);
+        getLogger().setLevel(Level.INFO);
     }
 
     @Override
@@ -55,11 +65,12 @@ public class BukkitSSH extends JavaPlugin
 
         File hostKey = new File(getDataFolder(), "hostkey");
 
-        sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(hostKey));
+        sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(hostKey.toPath()));
         sshd.setShellFactory(new ConsoleShellFactory());
         sshd.setPasswordAuthenticator(new ConfigPasswordAuthenticator());
         sshd.setPublickeyAuthenticator(new PublicKeyAuthenticator(authorizedKeys));
         sshd.setCommandFactory(new ConsoleCommandFactory());
+
 
         try
         {

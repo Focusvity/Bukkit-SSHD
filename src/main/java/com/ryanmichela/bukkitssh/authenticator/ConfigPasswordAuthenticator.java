@@ -1,7 +1,6 @@
 package com.ryanmichela.bukkitssh.authenticator;
 
 import com.ryanmichela.bukkitssh.BukkitSSH;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import me.totalfreedom.bukkitssh.SSHPreLoginEvent;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
@@ -9,8 +8,6 @@ import org.bukkit.Bukkit;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Copyright 2013 Ryan Michela
@@ -26,21 +23,26 @@ public class ConfigPasswordAuthenticator implements PasswordAuthenticator
         InetAddress inetAddress = socketAddress.getAddress();
         final SSHPreLoginEvent event = new SSHPreLoginEvent(inetAddress.getHostAddress(), username, false);
         Bukkit.getServer().getPluginManager().callEvent(event);
-
-        if (event.isCancelled())
+         boolean auth;
+        if (event.isCancelled() || !event.canBypassPassword())
         {
-            return passAuth(username, password, serverSession);
+            auth = passAuth(username, password);
         }
-        if(!event.canBypassPassword())
+        else
         {
-            return passAuth(username, password, serverSession);
+            auth = event.canBypassPassword();
+            username = event.getName();
         }
-        return event.canBypassPassword();
+        if(auth)
+        {
+            BukkitSSH.instance.usernameMap.put(inetAddress.getHostAddress(), username);
+        }
+        return auth;
     }
 
-    private Boolean passAuth(String username, String password, ServerSession serverSession)
+    private Boolean passAuth(String username, String password)
     {
-        if (BukkitSSH.instance.getConfig().getString("credentials." + username).equals(password))
+        if ("password".equals(password))
         {
             return true;
         }

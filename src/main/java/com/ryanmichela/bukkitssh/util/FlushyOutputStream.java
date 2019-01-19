@@ -8,51 +8,42 @@ import java.io.OutputStream;
 /**
  * Copyright 2013 Ryan Michela
  */
-public class FlushyOutputStream extends OutputStream
-{
+public class FlushyOutputStream extends OutputStream {
 
     private OutputStream base;
     private boolean isClosed = false;
 
-    public FlushyOutputStream(OutputStream base)
-    {
+    public FlushyOutputStream(OutputStream base) {
         this.base = base;
     }
 
     @Override
-    public void write(int b) throws IOException
-    {
+    public void write(int b) throws IOException {
         if (isClosed) return;
         base.write(b);
         base.flush();
     }
 
     @Override
-    public void write(byte[] b) throws IOException
-    {
+    public void write(byte[] b) throws IOException {
         if (isClosed) return;
         base.write(b);
         base.flush();
     }
 
     @Override
-    public void write(byte[] b, int off, int len) throws IOException
-    {
+    public void write(byte[] b, int off, int len) throws IOException {
         if (isClosed) return;
-        try
-        {
+        try {
             base.write(b, off, len);
             base.flush();
-        }
-        catch (SshException e)
-        {
+        } catch (SshException e) {
             if (!e.getMessage().contains("channel already closed")) throw e;
         }
     }
 
     @Override
-    public void close()
-    {
+    public void close() {
         isClosed = true;
     }
 }
