@@ -1,4 +1,4 @@
-package me.focusvity.ssh.session;
+package me.focusvity.bukkitssh.session;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;

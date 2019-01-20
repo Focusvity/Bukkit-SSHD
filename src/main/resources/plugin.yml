@@ -1,5 +1,6 @@
 name: BukkitSSH
 version: ${project.version}
-authors: [Ryan Michela, Haarolean, toxuin, _Fleek_]
-main: com.ryanmichela.bukkitssh.BukkitSSH
-description: A modified SSH plugin for TotalFreedom server
+api-version: 1.13
+authors: [Ryan Michela, Haarolean, toxuin, _Fleek]
+main: me.focusvity.bukkitssh.BukkitSSH
+description: A plugin that gives people access to SSH console

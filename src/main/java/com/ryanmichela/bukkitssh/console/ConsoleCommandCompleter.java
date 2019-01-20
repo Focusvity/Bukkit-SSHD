@@ -4,10 +4,10 @@ package com.ryanmichela.bukkitssh.console;
  * Copyright 2013 Ryan Michela
  */
 
-import com.ryanmichela.bukkitssh.BukkitSSH;
 import com.ryanmichela.bukkitssh.util.ReflectionUtil;
 import com.ryanmichela.bukkitssh.util.Waitable;
 import jline.console.completer.Completer;
+import me.focusvity.bukkitssh.BukkitSSH;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 

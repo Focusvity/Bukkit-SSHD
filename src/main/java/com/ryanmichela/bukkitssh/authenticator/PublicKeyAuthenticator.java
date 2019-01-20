@@ -1,7 +1,7 @@
 package com.ryanmichela.bukkitssh.authenticator;
 
-import com.ryanmichela.bukkitssh.BukkitSSH;
 import com.ryanmichela.bukkitssh.util.PemDecoder;
+import me.focusvity.bukkitssh.BukkitSSH;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.session.ServerSession;

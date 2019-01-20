@@ -1,11 +1,11 @@
 package com.ryanmichela.bukkitssh.console;
 
-import com.ryanmichela.bukkitssh.BukkitSSH;
-import me.focusvity.ssh.session.SSHSession;
-import org.apache.sshd.server.Command;
-import org.apache.sshd.server.CommandFactory;
+import me.focusvity.bukkitssh.BukkitSSH;
+import me.focusvity.bukkitssh.session.SSHSession;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
+import org.apache.sshd.server.command.Command;
+import org.apache.sshd.server.command.CommandFactory;
 
 import java.io.IOException;
 import java.io.InputStream;

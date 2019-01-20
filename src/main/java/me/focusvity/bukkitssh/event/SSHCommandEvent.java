@@ -1,4 +1,4 @@
-package me.focusvity.ssh;
+package me.focusvity.bukkitssh.event;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
@@ -21,7 +21,7 @@ public class SSHCommandEvent extends ServerEvent implements Cancellable
         this.command = command;
     }
 
-    public static HandlerList getHandlerList() // Required for Aero dependency
+    public static HandlerList getHandlerList()
     {
         return handlers;
     }

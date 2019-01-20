@@ -1,6 +1,6 @@
 package com.ryanmichela.bukkitssh.authenticator;
 
-import com.ryanmichela.bukkitssh.BukkitSSH;
+import me.focusvity.bukkitssh.BukkitSSH;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
 

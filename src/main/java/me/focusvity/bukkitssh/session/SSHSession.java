@@ -1,8 +1,8 @@
-package me.focusvity.ssh.session;
+package me.focusvity.bukkitssh.session;
 
-import com.ryanmichela.bukkitssh.BukkitSSH;
 import com.ryanmichela.bukkitssh.console.ConsoleShellFactory;
-import me.focusvity.ssh.SSHCommandEvent;
+import me.focusvity.bukkitssh.BukkitSSH;
+import me.focusvity.bukkitssh.event.SSHCommandEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
