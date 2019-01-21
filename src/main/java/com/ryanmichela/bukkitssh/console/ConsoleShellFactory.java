@@ -1,11 +1,11 @@
 package com.ryanmichela.bukkitssh.console;
 
-import com.ryanmichela.bukkitssh.SshTerminal;
 import com.ryanmichela.bukkitssh.util.FlushyOutputStream;
 import com.ryanmichela.bukkitssh.util.FlushyStreamHandler;
 import com.ryanmichela.bukkitssh.util.StreamHandlerAppender;
 import jline.console.ConsoleReader;
 import me.focusvity.bukkitssh.BukkitSSH;
+import me.focusvity.bukkitssh.event.util.SSHTerminal;
 import me.focusvity.bukkitssh.session.SSHSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
@@ -90,7 +90,7 @@ public class ConsoleShellFactory implements Factory<Command>
         {
             try
             {
-                consoleReader = new ConsoleReader(in, new FlushyOutputStream(out), new SshTerminal());
+                consoleReader = new ConsoleReader(in, new FlushyOutputStream(out), new SSHTerminal());
                 consoleReader.setExpandEvents(true);
                 consoleReader.addCompleter(new ConsoleCommandCompleter());
 
@@ -130,7 +130,7 @@ public class ConsoleShellFactory implements Factory<Command>
                         continue;
                     }
 
-                    if (command.equals("bukkitssh.exit") || command.equals("bukkitssh.quit"))
+                    if (command.equals("ssh.exit") || command.equals("ssh.quit"))
                     {
                         break;
                     }
@@ -171,7 +171,7 @@ public class ConsoleShellFactory implements Factory<Command>
             consoleReader.println("Connected to: " + Bukkit.getServer().getName() + "\r");
             consoleReader.println(" - " + Bukkit.getServer().getMotd() + "\r");
             consoleReader.println("\r");
-            consoleReader.println("Type 'bukkitssh.exit' or 'bukkitssh.quit' to exit the shell." + "\r");
+            consoleReader.println("Type 'ssh.exit' or 'ssh.quit' to exit the shell." + "\r");
             consoleReader.println("================================================" + "\r");
         }
     }
