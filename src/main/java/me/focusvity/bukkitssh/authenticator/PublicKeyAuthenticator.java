@@ -18,7 +18,7 @@ public class PublicKeyAuthenticator implements PublickeyAuthenticator
     @Override
     public boolean authenticate(String username, PublicKey key, ServerSession serverSession) throws AsyncAuthException
     {
-        File keyFile = new File(BukkitSSH.instance.keys, username);
+        File keyFile = new File(BukkitSSH.instance.keys.getAbsolutePath(), username);
 
         if (keyFile.exists())
         {
@@ -27,9 +27,9 @@ public class PublicKeyAuthenticator implements PublickeyAuthenticator
                 FileReader reader = new FileReader(keyFile);
                 PemDecoder decoder = new PemDecoder(reader);
                 PublicKey pkey = decoder.getPemBytes();
-                reader.close();
+                decoder.close();
 
-                if (key != null)
+                if (pkey != null)
                 {
                     return ArrayUtils.isEquals(key.getEncoded(), pkey.getEncoded());
                 }
