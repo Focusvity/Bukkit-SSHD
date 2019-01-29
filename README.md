@@ -1,6 +1,6 @@
 BukkitSSH
 ===========
-[![Build Status](https://travis-ci.org/Focusvity/BukkitSSH.svg?branch=master)](https://travis-ci.org/Focusvity/BukkitSSH)
+[![Build Status](https://travis-ci.org/Focusvity/BukkitSSH.svg?branch=tf)](https://travis-ci.org/Focusvity/BukkitSSH)
 
 ## Compiling
 `DIR` is your project directory. Recommended compiling method: Command Prompt (using `mvn` command).
