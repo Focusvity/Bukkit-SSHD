@@ -14,7 +14,7 @@ public class SshTerminal extends TerminalSupport
     }
 
     @Override
-    public void init() throws Exception
+    public void init()
     {
         setAnsiSupported(true);
         setEchoEnabled(true);

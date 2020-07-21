@@ -21,7 +21,7 @@ public class SSHCommandEvent extends ServerEvent implements Cancellable
         this.command = command;
     }
 
-    public static HandlerList getHandlerList() // Required for Aero dependency
+    public static HandlerList getHandlerList()
     {
         return handlers;
     }
@@ -62,10 +62,5 @@ public class SSHCommandEvent extends ServerEvent implements Cancellable
     public CommandSender getSender()
     {
         return sender;
-    }
-
-    public void setSender(CommandSender sender)
-    {
-        this.sender = sender;
     }
 }

@@ -80,7 +80,6 @@ public class ConsoleCommandFactory implements CommandFactory
             }
             finally
             {
-                callback.onExit(0);
                 for (SSHSession session : SSHSession.sessions)
                 {
                     if (session.getUsername().equals(environment.getEnv().get(Environment.ENV_USER)))
@@ -88,6 +87,7 @@ public class ConsoleCommandFactory implements CommandFactory
                         SSHSession.sessions.remove(session);
                     }
                 }
+                callback.onExit(0);
             }
         }
 

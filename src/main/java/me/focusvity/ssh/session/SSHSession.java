@@ -75,7 +75,7 @@ public class SSHSession
                     return;
                 }
 
-                server.dispatchCommand(event.getSender(), command);
+                server.dispatchCommand(event.getSender(), (command != event.getCommand() ? event.getCommand() : command));
             }
         }.runTask(BukkitSSH.instance);
     }

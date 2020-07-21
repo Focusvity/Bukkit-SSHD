@@ -13,14 +13,14 @@ import java.util.Map;
 public class ConfigPasswordAuthenticator implements PasswordAuthenticator
 {
 
-    private Map<String, Integer> failCounts = new HashMap<String, Integer>();
+    private Map<String, Integer> failCounts = new HashMap<>();
 
     @Override
     public boolean authenticate(String username, String password, ServerSession serverSession)
     {
         if (BukkitSSH.instance.getConfig().getString("credentials." + username).equals(password))
         {
-            failCounts.put(username, 0);
+            failCounts.remove(username);
             return true;
         }
         BukkitSSH.instance.getLogger().info("Failed login for " + username + " using password authentication.");
@@ -28,19 +28,13 @@ public class ConfigPasswordAuthenticator implements PasswordAuthenticator
         try
         {
             Thread.sleep(3000);
-            if (failCounts.containsKey(username))
+            int fail = failCounts.getOrDefault(username, 0) + 1;
+            if (fail >= 3)
             {
-                failCounts.put(username, failCounts.get(username) + 1);
-            }
-            else
-            {
-                failCounts.put(username, 1);
-            }
-            if (failCounts.get(username) >= 3)
-            {
-                failCounts.put(username, 0);
+                failCounts.remove(username);
                 serverSession.close(true);
             }
+            failCounts.replace(username, fail);
         }
         catch (InterruptedException e)
         {

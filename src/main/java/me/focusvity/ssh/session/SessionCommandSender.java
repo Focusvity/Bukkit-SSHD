@@ -48,6 +48,12 @@ public class SessionCommandSender implements ConsoleCommandSender
     }
 
     @Override
+    public Spigot spigot()
+    {
+        return null;
+    }
+
+    @Override
     public boolean isConversing()
     {
         return false;

@@ -63,7 +63,6 @@ public class PublicKeyAuthenticator implements PublickeyAuthenticator
                     ". Make sure the user's key is named the same as their user name " +
                     "without a file extension.");
         }
-
         return false;
     }
 }
