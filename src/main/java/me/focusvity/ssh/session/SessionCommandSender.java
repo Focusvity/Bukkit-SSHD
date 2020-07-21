@@ -1,5 +1,6 @@
 package me.focusvity.ssh.session;
 
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.ConsoleCommandSender;
@@ -50,7 +51,23 @@ public class SessionCommandSender implements ConsoleCommandSender
     @Override
     public Spigot spigot()
     {
-        return null;
+        return new Spigot()
+        {
+            @Override
+            public void sendMessage(BaseComponent component)
+            {
+                SessionCommandSender.this.sendMessage(component.toPlainText());
+            }
+
+            @Override
+            public void sendMessage(BaseComponent... components)
+            {
+                for (BaseComponent component : components)
+                {
+                    sendMessage(component);
+                }
+            }
+        };
     }
 
     @Override

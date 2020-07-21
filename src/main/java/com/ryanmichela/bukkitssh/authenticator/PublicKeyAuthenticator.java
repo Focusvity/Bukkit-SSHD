@@ -2,9 +2,12 @@ package com.ryanmichela.bukkitssh.authenticator;
 
 import com.ryanmichela.bukkitssh.BukkitSSH;
 import com.ryanmichela.bukkitssh.util.PemDecoder;
+import me.focusvity.ssh.SSHPreLoginEvent;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
 
 import java.io.File;
 import java.io.FileReader;
@@ -26,14 +29,11 @@ public class PublicKeyAuthenticator implements PublickeyAuthenticator
     @Override
     public boolean authenticate(String username, PublicKey key, ServerSession session)
     {
-        byte[] keyBytes = key.getEncoded();
         File keyFile = new File(authorizedKeysDir, username);
-
         if (keyFile.exists())
         {
             try
             {
-
                 FileReader fr = new FileReader(keyFile);
                 PemDecoder pd = new PemDecoder(fr);
                 PublicKey k = pd.getPemBytes();
@@ -43,6 +43,13 @@ public class PublicKeyAuthenticator implements PublickeyAuthenticator
                 {
                     if (ArrayUtils.isEquals(key.getEncoded(), k.getEncoded()))
                     {
+                        final Server server = Bukkit.getServer();
+                        SSHPreLoginEvent event = new SSHPreLoginEvent(username);
+                        server.getPluginManager().callEvent(event);
+                        if (event.isCancelled())
+                        {
+                            return false;
+                        }
                         return true;
                     }
                 }

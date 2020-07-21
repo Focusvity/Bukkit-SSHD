@@ -66,16 +66,13 @@ public class SSHSession
             public void run()
             {
                 final Server server = Bukkit.getServer();
-
                 final SSHCommandEvent event = new SSHCommandEvent(commandSender, command);
                 server.getPluginManager().callEvent(event);
-
-                if (event.isCancelled())
+                if (event.isCancelled() || event.getCommand().isEmpty())
                 {
                     return;
                 }
-
-                server.dispatchCommand(event.getSender(), (command != event.getCommand() ? event.getCommand() : command));
+                server.dispatchCommand(event.getSender(), event.getCommand());
             }
         }.runTask(BukkitSSH.instance);
     }

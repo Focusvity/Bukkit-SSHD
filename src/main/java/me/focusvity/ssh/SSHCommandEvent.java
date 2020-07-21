@@ -1,11 +1,12 @@
 package me.focusvity.ssh;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.server.ServerEvent;
 
-public class SSHCommandEvent extends ServerEvent implements Cancellable
+public class SSHCommandEvent extends Event implements Cancellable
 {
 
     private static final HandlerList handlers = new HandlerList();
@@ -16,6 +17,7 @@ public class SSHCommandEvent extends ServerEvent implements Cancellable
 
     public SSHCommandEvent(CommandSender sender, String command)
     {
+        super(!Bukkit.getServer().isPrimaryThread());
         this.cancelled = false;
         this.sender = sender;
         this.command = command;
@@ -62,5 +64,10 @@ public class SSHCommandEvent extends ServerEvent implements Cancellable
     public CommandSender getSender()
     {
         return sender;
+    }
+
+    public void setSender(CommandSender sender)
+    {
+        this.sender = sender;
     }
 }
