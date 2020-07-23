@@ -61,11 +61,6 @@ public class ConsoleShellFactory implements Factory<Command>
             return err;
         }
 
-        public Environment getEnvironment()
-        {
-            return environment;
-        }
-
         public void setInputStream(InputStream in)
         {
             this.in = in;
@@ -100,11 +95,11 @@ public class ConsoleShellFactory implements Factory<Command>
                 ((Logger) LogManager.getRootLogger()).addAppender(streamHandlerAppender);
 
                 environment = env;
-                thread = new Thread(this, "BukkitSSH " + env.getEnv().get(Environment.ENV_USER));
+                thread = new Thread("Connected to " + Bukkit.getServer().getName());
                 thread.start();
                 SSHSession session = new SSHSession();
                 session.setUsername(env.getEnv().get(Environment.ENV_USER));
-                SSHSession.sessions.add(session);
+                SSHSession.getSessionMap().put(env.getEnv().get(Environment.ENV_USER), session);
             }
             catch (Exception e)
             {
@@ -139,12 +134,9 @@ public class ConsoleShellFactory implements Factory<Command>
                     {
                         BukkitSSH.instance.getLogger().info("[" + environment.getEnv().get(Environment.ENV_USER) + "@SSH] Command executed: " + command);
 
-                        for (SSHSession session : SSHSession.sessions)
+                        if (SSHSession.getSessionMap().containsKey(environment.getEnv().get(Environment.ENV_USER)))
                         {
-                            if (session.getUsername().equals(environment.getEnv().get(Environment.ENV_USER)))
-                            {
-                                session.executeCommand(command);
-                            }
+                            SSHSession.getSessionMap().get(environment.getEnv().get(Environment.ENV_USER)).executeCommand(command);
                         }
                     });
                 }
@@ -155,12 +147,9 @@ public class ConsoleShellFactory implements Factory<Command>
             }
             finally
             {
-                for (SSHSession session : SSHSession.sessions)
+                if (SSHSession.getSessionMap().containsKey(environment.getEnv().get(Environment.ENV_USER)))
                 {
-                    if (session.getUsername().equals(environment.getEnv().get(Environment.ENV_USER)))
-                    {
-                        SSHSession.sessions.remove(session);
-                    }
+                    SSHSession.getSessionMap().remove(environment.getEnv().get(Environment.ENV_USER));
                 }
                 callback.onExit(0);
             }

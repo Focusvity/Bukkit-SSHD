@@ -7,7 +7,6 @@ import org.apache.sshd.server.CommandFactory;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -59,19 +58,16 @@ public class ConsoleCommandFactory implements CommandFactory
         }
 
         @Override
-        public void start(Environment environment) throws IOException
+        public void start(Environment environment)
         {
             try
             {
                 BukkitSSH.instance.getLogger()
                         .info("[" + environment.getEnv().get(Environment.ENV_USER) + "@SSH] Command executed: " + command);
 
-                for (SSHSession session : SSHSession.sessions)
+                if (SSHSession.getSessionMap().containsKey(environment.getEnv().get(Environment.ENV_USER)))
                 {
-                    if (session.getUsername().equals(environment.getEnv().get(Environment.ENV_USER)))
-                    {
-                        session.executeCommand(command);
-                    }
+                    SSHSession.getSessionMap().get(environment.getEnv().get(Environment.ENV_USER)).executeCommand(command);
                 }
             }
             catch (Exception e)
@@ -80,12 +76,9 @@ public class ConsoleCommandFactory implements CommandFactory
             }
             finally
             {
-                for (SSHSession session : SSHSession.sessions)
+                if (SSHSession.getSessionMap().containsKey(environment.getEnv().get(Environment.ENV_USER)))
                 {
-                    if (session.getUsername().equals(environment.getEnv().get(Environment.ENV_USER)))
-                    {
-                        SSHSession.sessions.remove(session);
-                    }
+                    SSHSession.getSessionMap().remove(environment.getEnv().get(Environment.ENV_USER));
                 }
                 callback.onExit(0);
             }

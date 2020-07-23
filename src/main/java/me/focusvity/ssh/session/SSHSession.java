@@ -9,16 +9,15 @@ import org.bukkit.Server;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class SSHSession
 {
 
-    public static final List<SSHSession> sessions = new ArrayList<>();
+    private static Map<String, SSHSession> sessionMap = new HashMap<>();
     private final SessionCommandSender commandSender;
-    //
     private String username;
 
     public SSHSession()
@@ -36,9 +35,9 @@ public class SSHSession
         return username;
     }
 
-    public void setUsername(String username)
+    public void setUsername(String name)
     {
-        this.username = username;
+        this.username = name;
     }
 
     public void writeRawLine(String message)
@@ -75,5 +74,10 @@ public class SSHSession
                 server.dispatchCommand(event.getSender(), event.getCommand());
             }
         }.runTask(BukkitSSH.instance);
+    }
+
+    public static Map<String, SSHSession> getSessionMap()
+    {
+        return sessionMap;
     }
 }

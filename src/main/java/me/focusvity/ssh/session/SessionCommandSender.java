@@ -11,7 +11,6 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Arrays;
 import java.util.Set;
 
 public class SessionCommandSender implements ConsoleCommandSender
@@ -25,21 +24,18 @@ public class SessionCommandSender implements ConsoleCommandSender
     }
 
     @Override
-    public void sendMessage(String s)
+    public void sendMessage(String message)
     {
-        this.sendRawMessage(s);
+        session.writeRawLine(message);
     }
 
     @Override
-    public void sendMessage(String[] strings)
+    public void sendMessage(String[] messages)
     {
-        Arrays.asList(strings).forEach(this::sendMessage);
-    }
-
-    @Override
-    public Server getServer()
-    {
-        return Bukkit.getServer();
+        for (String message : messages)
+        {
+            sendMessage(message);
+        }
     }
 
     @Override
@@ -49,86 +45,37 @@ public class SessionCommandSender implements ConsoleCommandSender
     }
 
     @Override
-    public Spigot spigot()
+    public Server getServer()
     {
-        return new Spigot()
-        {
-            @Override
-            public void sendMessage(BaseComponent component)
-            {
-                SessionCommandSender.this.sendMessage(component.toPlainText());
-            }
-
-            @Override
-            public void sendMessage(BaseComponent... components)
-            {
-                for (BaseComponent component : components)
-                {
-                    sendMessage(component);
-                }
-            }
-        };
+        return Bukkit.getServer();
     }
 
     @Override
-    public boolean isConversing()
-    {
-        return false;
-    }
-
-    @Override
-    public void acceptConversationInput(String s)
-    {
-    }
-
-    @Override
-    public boolean beginConversation(Conversation conversation)
-    {
-        return false;
-    }
-
-    @Override
-    public void abandonConversation(Conversation conversation)
-    {
-    }
-
-    @Override
-    public void abandonConversation(Conversation conversation, ConversationAbandonedEvent conversationAbandonedEvent)
-    {
-    }
-
-    @Override
-    public void sendRawMessage(String s)
-    {
-        this.session.writeRawLine(s);
-    }
-
-    @Override
-    public boolean isPermissionSet(String s)
+    public boolean isPermissionSet(String name)
     {
         return true;
     }
 
     @Override
-    public boolean isPermissionSet(Permission permission)
+    public boolean isPermissionSet(Permission perm)
     {
         return true;
     }
 
     @Override
-    public boolean hasPermission(String s)
+    public boolean hasPermission(String name)
     {
         return true;
     }
 
     @Override
-    public boolean hasPermission(Permission permission)
+    public boolean hasPermission(Permission perm)
     {
         return true;
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b)
+    public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value)
     {
         return null;
     }
@@ -140,19 +87,19 @@ public class SessionCommandSender implements ConsoleCommandSender
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin, String s, boolean b, int i)
+    public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value, int ticks)
     {
         return null;
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin, int i)
+    public PermissionAttachment addAttachment(Plugin plugin, int ticks)
     {
         return null;
     }
 
     @Override
-    public void removeAttachment(PermissionAttachment permissionAttachment)
+    public void removeAttachment(PermissionAttachment attachment)
     {
     }
 
@@ -174,7 +121,64 @@ public class SessionCommandSender implements ConsoleCommandSender
     }
 
     @Override
-    public void setOp(boolean b)
+    public void setOp(boolean value)
     {
+    }
+
+    @Override
+    public boolean isConversing()
+    {
+        return false;
+    }
+
+    @Override
+    public void acceptConversationInput(String string)
+    {
+    }
+
+    @Override
+    public boolean beginConversation(Conversation c)
+    {
+        return false;
+    }
+
+    @Override
+    public void abandonConversation(Conversation c)
+    {
+    }
+
+    @Override
+    public void abandonConversation(Conversation c, ConversationAbandonedEvent cae)
+    {
+    }
+
+    @Override
+    public void sendRawMessage(String string)
+    {
+        session.writeRawLine(string);
+    }
+
+    @Override
+    public Spigot spigot()
+    {
+        return new Spigot()
+        {
+
+            @Override
+            public void sendMessage(BaseComponent component)
+            {
+                SessionCommandSender.this.sendMessage(component.toPlainText());
+            }
+
+            @Override
+            public void sendMessage(BaseComponent... components)
+            {
+                for (BaseComponent bc : components)
+                {
+                    sendMessage(bc);
+                }
+            }
+
+        };
     }
 }
