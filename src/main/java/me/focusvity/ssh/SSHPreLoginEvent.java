@@ -37,11 +37,6 @@ public class SSHPreLoginEvent extends Event implements Cancellable
         return name;
     }
 
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
     @Override
     public HandlerList getHandlers()
     {

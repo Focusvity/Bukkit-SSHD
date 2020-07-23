@@ -6,6 +6,7 @@ import com.ryanmichela.bukkitssh.util.FlushyOutputStream;
 import com.ryanmichela.bukkitssh.util.FlushyStreamHandler;
 import com.ryanmichela.bukkitssh.util.StreamHandlerAppender;
 import jline.console.ConsoleReader;
+import me.focusvity.ssh.SSHPreLoginEvent;
 import me.focusvity.ssh.session.SSHSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
@@ -85,6 +86,12 @@ public class ConsoleShellFactory implements Factory<Command>
         {
             try
             {
+                SSHPreLoginEvent event = new SSHPreLoginEvent(env.getEnv().get(Environment.ENV_USER));
+                Bukkit.getServer().getPluginManager().callEvent(event);
+                if (event.isCancelled())
+                {
+                    return;
+                }
                 consoleReader = new ConsoleReader(in, new FlushyOutputStream(out), new SshTerminal());
                 consoleReader.setExpandEvents(true);
                 consoleReader.addCompleter(new ConsoleCommandCompleter());
